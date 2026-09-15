@@ -17,6 +17,11 @@ export default function AppShell() {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#172033] flex flex-col antialiased">
+      {/* Accessible Skip Link */}
+      <a href="#main-content" className="sr-only focus:not-sr-only">
+        Skip to main content
+      </a>
+
       {/* Network & Offline Status Banner */}
       <OfflineBanner />
 
@@ -31,7 +36,11 @@ export default function AppShell() {
           <Navbar onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
           {/* Main Route View Outlet */}
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8">
+          <main
+            id="main-content"
+            tabIndex="-1"
+            className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto pb-20 md:pb-8 focus:outline-none"
+          >
             <Outlet />
           </main>
         </div>
