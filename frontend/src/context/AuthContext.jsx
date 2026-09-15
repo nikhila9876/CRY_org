@@ -1,36 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { MOCK_USERS } from '../mock/data/mockUsers';
 
 export const DEMO_USERS = {
-  cry_staff: {
-    id: 'user-staff-1',
-    name: 'Priya Sharma',
-    email: 'priya.sharma@cry.org',
-    role: 'cry_staff',
-    roleLabel: 'CRY Staff / Frontliner',
-    ngoName: 'CRY India - Regional Office',
-    avatar: 'PS',
-    badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
-  },
-  ngo_member: {
-    id: 'user-ngo-1',
-    name: 'Aarav Patel',
-    email: 'aarav@bachpanngo.org',
-    role: 'ngo_member',
-    roleLabel: 'Partner NGO Member',
-    ngoName: 'Bachpan Bachao Trust',
-    avatar: 'AP',
-    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-  },
-  ngo_admin: {
-    id: 'user-admin-1',
-    name: 'Sunita Roy',
-    email: 'sunita@bachpanngo.org',
-    role: 'ngo_admin',
-    roleLabel: 'NGO Admin',
-    ngoName: 'Bachpan Bachao Trust',
-    avatar: 'SR',
-    badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
-  },
+  cry_staff: MOCK_USERS[0],
+  ngo_member: MOCK_USERS[1],
+  ngo_admin: MOCK_USERS[2],
 };
 
 const AuthContext = createContext(null);
@@ -43,7 +17,6 @@ export function AuthProvider({ children }) {
     } catch {
       // Ignore
     }
-    // Default to CRY Staff for initial preview
     return DEMO_USERS.cry_staff;
   });
 
@@ -86,6 +59,7 @@ export function AuthProvider({ children }) {
         user,
         role: user?.role || null,
         isAuthenticated: !!user,
+        token,
         login,
         logout,
         switchRole,
@@ -102,4 +76,23 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
+}
+
+/**
+ * usePermissions: Granular access control hook for UI actions
+ */
+export function usePermissions() {
+  const { role } = useAuth();
+
+  return {
+    isStaff: role === 'cry_staff',
+    isNgo: role === 'ngo_member' || role === 'ngo_admin',
+    isNgoAdmin: role === 'ngo_admin',
+    canReviewDocuments: role === 'cry_staff',
+    canScheduleVisits: role === 'cry_staff',
+    canUploadDocuments: role === 'ngo_member' || role === 'ngo_admin',
+    canSubmitFieldReports: true,
+    canManageNgoUsers: role === 'ngo_admin',
+    canAccessStaffControls: role === 'cry_staff',
+  };
 }
