@@ -25,9 +25,9 @@ import NgoDashboard from './pages/ngo/NgoDashboard';
 import NgoTasks from './pages/ngo/NgoTasks';
 import NgoProjects from './pages/ngo/NgoProjects';
 import NgoDocuments from './pages/ngo/NgoDocuments';
+import NgoNotifications from './pages/ngo/NgoNotifications';
 import {
   NgoFieldVisits,
-  NgoNotifications,
   NgoProfile,
 } from './pages/ngo/NgoPagesBundle';
 
