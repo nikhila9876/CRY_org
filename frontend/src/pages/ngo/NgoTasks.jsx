@@ -15,10 +15,12 @@ import {
   Check,
 } from 'lucide-react';
 import { MOCK_TASKS } from '../../mock/data/mockTasks';
+import DeadlineFilters from '../../components/common/DeadlineFilters';
 
 export default function NgoTasks() {
   const [tasks, setTasks] = useState(MOCK_TASKS);
-  const [selectedDueCategory, setSelectedDueCategory] = useState('ALL');
+  const [activeHorizon, setActiveHorizon] = useState('ALL');
+  const [activeCategory, setActiveCategory] = useState('ALL');
   const [selectedPriority, setSelectedPriority] = useState('ALL');
   const [selectedTaskDetails, setSelectedTaskDetails] = useState(null);
 
@@ -38,17 +40,34 @@ export default function NgoTasks() {
     );
   };
 
+  const taskCounts = {
+    all: tasks.filter((t) => t.status !== 'completed').length,
+    overdue: tasks.filter((t) => t.daysRemaining < 0 && t.status !== 'completed').length,
+    due24h: tasks.filter((t) => t.daysRemaining >= 0 && t.daysRemaining <= 1 && t.status !== 'completed').length,
+    due7d: tasks.filter((t) => t.daysRemaining >= 0 && t.daysRemaining <= 7 && t.status !== 'completed').length,
+    due30d: tasks.filter((t) => t.daysRemaining >= 0 && t.daysRemaining <= 30 && t.status !== 'completed').length,
+  };
+
   const filteredTasks = tasks.filter((task) => {
-    const matchesCategory =
-      selectedDueCategory === 'ALL' ||
-      (selectedDueCategory === 'completed'
-        ? task.status === 'completed'
-        : task.dueCategory === selectedDueCategory && task.status !== 'completed');
+    if (activeHorizon === 'OVERDUE') {
+      if (!(task.daysRemaining < 0 && task.status !== 'completed')) return false;
+    } else if (activeHorizon === '24H') {
+      if (!(task.daysRemaining >= 0 && task.daysRemaining <= 1 && task.status !== 'completed')) return false;
+    } else if (activeHorizon === '7D') {
+      if (!(task.daysRemaining >= 0 && task.daysRemaining <= 7 && task.status !== 'completed')) return false;
+    } else if (activeHorizon === '30D') {
+      if (!(task.daysRemaining >= 0 && task.daysRemaining <= 30 && task.status !== 'completed')) return false;
+    }
 
-    const matchesPriority =
-      selectedPriority === 'ALL' || task.priority === selectedPriority;
+    if (activeCategory !== 'ALL' && task.category !== activeCategory) {
+      return false;
+    }
 
-    return matchesCategory && matchesPriority;
+    if (selectedPriority !== 'ALL' && task.priority !== selectedPriority) {
+      return false;
+    }
+
+    return true;
   });
 
   return (
@@ -79,49 +98,14 @@ export default function NgoTasks() {
         </Link>
       </div>
 
-      {/* Due Category Filter Tabs */}
-      <div className="bg-white p-3.5 rounded-2xl border border-[#E2E8F0] shadow-2xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-1.5 text-xs">
-          {[
-            { key: 'ALL', label: 'All Tasks' },
-            { key: 'today', label: '🔥 Today' },
-            { key: 'this_week', label: '📅 This Week' },
-            { key: 'this_month', label: '🗓️ This Month' },
-            { key: 'completed', label: '✓ Completed' },
-          ].map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setSelectedDueCategory(tab.key)}
-              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                selectedDueCategory === tab.key
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="flex items-center space-x-2 text-xs">
-          <span className="text-slate-400 font-semibold text-[11px] uppercase">Priority:</span>
-          {['ALL', 'high', 'medium', 'low'].map((p) => (
-            <button
-              key={p}
-              type="button"
-              onClick={() => setSelectedPriority(p)}
-              className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
-                selectedPriority === p
-                  ? 'bg-[#2E7D32] text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
-            >
-              {p === 'ALL' ? 'All' : p.toUpperCase()}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* Deadline Horizons & Category Filters */}
+      <DeadlineFilters
+        activeHorizon={activeHorizon}
+        onHorizonChange={setActiveHorizon}
+        activeCategory={activeCategory}
+        onCategoryChange={setActiveCategory}
+        taskCounts={taskCounts}
+      />
 
       {/* Tasks List */}
       <div className="space-y-3">
