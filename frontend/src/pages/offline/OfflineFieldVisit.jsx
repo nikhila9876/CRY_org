@@ -24,6 +24,7 @@ import OfflineNotes from '../../components/offline/OfflineNotes';
 import OfflinePhotoCapture from '../../components/offline/OfflinePhotoCapture';
 import OfflineVoiceNote from '../../components/offline/OfflineVoiceNote';
 import OfflineConnectionIndicator from '../../components/offline/OfflineConnectionIndicator';
+import PendingSyncQueue from '../../components/offline/PendingSyncQueue';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -225,29 +226,10 @@ export default function OfflineFieldVisit() {
         )}
 
         {activeTab === 'sync' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-bold text-[#172033]">
-                Pending Sync Queue & Storage
-              </h3>
-              <p className="text-xs text-slate-500">
-                Items stored in browser IndexedDB waiting for connection restoration.
-              </p>
-            </div>
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-              <div>
-                <div className="text-xs font-bold text-slate-800">2 Items Pending Remote Upload</div>
-                <div className="text-[11px] text-slate-500">1 Check-in update, 1 Observation draft</div>
-              </div>
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F766E] text-white text-xs font-bold"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                Process Queue
-              </button>
-            </div>
-          </div>
+          <PendingSyncQueue
+            isOnline={!simulatedOffline && isOnline}
+            onSyncComplete={() => setHasPendingChanges(false)}
+          />
         )}
       </div>
     </div>
