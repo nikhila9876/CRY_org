@@ -124,3 +124,29 @@ async function mergeExistingPR(prNumber, prTitle, headers) {
 
   return { prNumber, message: 'Merged successfully' };
 }
+
+// CLI runner
+if (process.argv[1]?.replace(/\\/g, '/').endsWith('scripts/pr_helper.js')) {
+  const args = process.argv.slice(2);
+  const getArg = (flag) => {
+    const idx = args.indexOf(flag);
+    return idx !== -1 ? args[idx + 1] : null;
+  };
+  const branch = getArg('--branch');
+  const commitMessage = getArg('--commit');
+  const prTitle = getArg('--title');
+  const prBody = getArg('--body') || prTitle;
+
+  if (!branch || !commitMessage || !prTitle) {
+    console.error('Usage: node scripts/pr_helper.js --branch <branch> --commit <commitMsg> --title <prTitle> [--body <prBody>]');
+    process.exit(1);
+  }
+
+  createAndMergePR({ branch, commitMessage, prTitle, prBody })
+    .then(() => process.exit(0))
+    .catch((err) => {
+      console.error(err);
+      process.exit(1);
+    });
+}
+
