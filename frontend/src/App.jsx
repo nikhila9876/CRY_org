@@ -12,8 +12,8 @@ import NotFound404 from './pages/public/NotFound404';
 
 // Staff pages
 import StaffDashboard from './pages/staff/StaffDashboard';
+import StaffNgoList from './pages/staff/StaffNgoList';
 import {
-  StaffNgoList,
   StaffProjects,
   StaffDocuments,
   StaffFieldVisits,
