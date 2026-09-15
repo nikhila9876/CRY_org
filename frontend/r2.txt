@@ -1,0 +1,20 @@
+The frontend is already created but currently has no design — only plain text. 
+Apply a modern UI framework (Tailwind CSS, Material-UI, or Chakra UI) to style it.
+
+Requirements:
+- Add responsive layouts with sidebar, header, and content areas.
+- Use the defined design tokens (multi-color theme system).
+- Style dashboards, tables, forms, alerts, and cards professionally.
+- Ensure role-based views (Staff, NGO, Frontliner) have distinct styled pages.
+- Seed demo data so the UI looks populated and not empty.
+- Keep all frontend code strictly inside the "frontend" folder.
+
+GitHub Workflow Requirements:
+- Every change must be a real file modification (no empty commits).
+- Create a new branch for each feature or fix (ui-<short-feature-name>).
+- Make atomic commits (one commit per logical change).
+- Push the branch to my repo: https://github.com/nikhila9876/CRY_org.git
+- Open a pull request into main with a clear title (e.g., "feat(ui): style staff dashboard").
+- Merge the PR after checks.
+- Ensure each PR shows visible file changes (additions/deletions) so GitHub Pulse reflects real progress.
+- Use conventional commit messages (feat:, fix:, style:, docs:) for clarity.
