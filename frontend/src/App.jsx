@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import AppShell from './components/layout/AppShell';
 import ProtectedRoute from './components/auth/ProtectedRoute';
 import RoleGuard from './components/auth/RoleGuard';
@@ -44,7 +45,8 @@ function RootIndexRedirect() {
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
@@ -193,6 +195,7 @@ export default function App() {
           <Route path="*" element={<NotFound404 />} />
         </Routes>
       </BrowserRouter>
+      </ToastProvider>
     </AuthProvider>
   );
 }
