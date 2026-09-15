@@ -23,6 +23,7 @@ import OfflineChecklist from '../../components/offline/OfflineChecklist';
 import OfflineNotes from '../../components/offline/OfflineNotes';
 import OfflinePhotoCapture from '../../components/offline/OfflinePhotoCapture';
 import OfflineVoiceNote from '../../components/offline/OfflineVoiceNote';
+import OfflineConnectionIndicator from '../../components/offline/OfflineConnectionIndicator';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -61,48 +62,13 @@ export default function OfflineFieldVisit() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-16">
-      {/* Top Banner: Connection & Storage State */}
-      <div
-        className={`px-4 py-3 rounded-2xl border flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-medium transition-colors ${
-          effectiveOffline
-            ? 'bg-amber-50/80 border-amber-200 text-amber-900'
-            : 'bg-teal-50/80 border-teal-200 text-teal-900'
-        }`}
-      >
-        <div className="flex items-center gap-2.5">
-          {effectiveOffline ? (
-            <div className="flex items-center gap-1.5 text-amber-700 font-bold">
-              <WifiOff className="w-4 h-4" />
-              <span>Offline Field Mode Active</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 text-teal-700 font-bold">
-              <Wifi className="w-4 h-4" />
-              <span>Online Network Connected</span>
-            </div>
-          )}
-          <span className="hidden md:inline text-slate-400">•</span>
-          <span className="hidden md:inline">
-            {effectiveOffline
-              ? 'Changes are being saved locally to IndexedDB storage.'
-              : 'Direct live sync available with central CRY server.'}
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setSimulatedOffline(!simulatedOffline)}
-            className="px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white text-slate-700 border border-slate-300 text-xs font-semibold shadow-2xs transition-colors"
-          >
-            {simulatedOffline ? 'Resume Real Network' : 'Simulate Low Connectivity'}
-          </button>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 pl-2 border-l border-slate-300">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Saved: {lastSaved}</span>
-          </div>
-        </div>
-      </div>
+      {/* Top Connection Indicator */}
+      <OfflineConnectionIndicator
+        onStatusChange={({ isOnline: online, isSimulated }) => {
+          setIsOnline(online);
+          setSimulatedOffline(isSimulated);
+        }}
+      />
 
       {/* Main Header Card */}
       <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-6 shadow-xs space-y-4">
