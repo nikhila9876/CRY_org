@@ -15,6 +15,7 @@ import StaffDashboard from './pages/staff/StaffDashboard';
 import StaffNgoList from './pages/staff/StaffNgoList';
 import StaffNgoDetail from './pages/staff/StaffNgoDetail';
 import StaffProjects from './pages/staff/StaffProjects';
+import StaffTimeline from './pages/staff/StaffTimeline';
 import {
   StaffDocuments,
   StaffFieldVisits,
@@ -92,6 +93,14 @@ export default function App() {
               element={
                 <RoleGuard allowedRoles={['cry_staff']}>
                   <StaffProjects />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/timeline"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffTimeline />
                 </RoleGuard>
               }
             />
