@@ -13,6 +13,7 @@ import NotFound404 from './pages/public/NotFound404';
 // Staff pages
 import StaffDashboard from './pages/staff/StaffDashboard';
 import StaffNgoList from './pages/staff/StaffNgoList';
+import StaffNgoDetail from './pages/staff/StaffNgoDetail';
 import {
   StaffProjects,
   StaffDocuments,
@@ -75,6 +76,14 @@ export default function App() {
               element={
                 <RoleGuard allowedRoles={['cry_staff']}>
                   <StaffNgoList />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/ngos/:id"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffNgoDetail />
                 </RoleGuard>
               }
             />
