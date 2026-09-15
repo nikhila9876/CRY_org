@@ -22,6 +22,7 @@ import { MOCK_FIELD_VISITS } from '../../mock/data/mockFieldVisits';
 import OfflineChecklist from '../../components/offline/OfflineChecklist';
 import OfflineNotes from '../../components/offline/OfflineNotes';
 import OfflinePhotoCapture from '../../components/offline/OfflinePhotoCapture';
+import OfflineVoiceNote from '../../components/offline/OfflineVoiceNote';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -254,32 +255,7 @@ export default function OfflineFieldVisit() {
         )}
 
         {activeTab === 'audio' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-bold text-[#172033]">
-                Offline Voice Memos
-              </h3>
-              <p className="text-xs text-slate-500">
-                Record quick spoken interviews or voice logs when typing is inconvenient.
-              </p>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-teal-100 text-[#0F766E] flex items-center justify-center mx-auto">
-                <Mic className="w-6 h-6" />
-              </div>
-              <h4 className="text-sm font-bold text-slate-800">Voice Note Recorder</h4>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Press record to capture audio memos up to 5 minutes each. Audio is encoded locally in browser storage.
-              </p>
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs transition-colors"
-              >
-                <Mic className="w-4 h-4" />
-                Start Voice Recording
-              </button>
-            </div>
-          </div>
+          <OfflineVoiceNote onUpdate={() => setHasPendingChanges(true)} />
         )}
 
         {activeTab === 'sync' && (
