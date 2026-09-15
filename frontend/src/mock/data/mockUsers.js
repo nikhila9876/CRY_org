@@ -1,0 +1,62 @@
+/**
+ * Mock Users and Roles for NGO360
+ * Adheres to Section 3, 4, 5, and 6 of specification
+ */
+
+export const MOCK_USERS = [
+  {
+    id: 'user-staff-1',
+    name: 'Priya Sharma',
+    email: 'priya.sharma@cry.org',
+    role: 'cry_staff',
+    roleLabel: 'CRY Staff / Frontliner',
+    title: 'Senior Project Monitoring Officer',
+    region: 'North Regional Office (Delhi NCR)',
+    assignedNgoIds: ['ngo-1', 'ngo-2', 'ngo-3', 'ngo-4', 'ngo-5', 'ngo-6'],
+    avatar: 'PS',
+    badgeColor: 'bg-blue-100 text-blue-800 border-blue-200',
+    phone: '+91 98101 23456',
+  },
+  {
+    id: 'user-ngo-1',
+    name: 'Aarav Patel',
+    email: 'aarav@bachpanngo.org',
+    role: 'ngo_member',
+    roleLabel: 'Partner NGO Member',
+    title: 'Project Coordinator',
+    ngoId: 'ngo-1',
+    ngoName: 'Bachpan Bachao Trust',
+    assignedStaff: 'Priya Sharma',
+    avatar: 'AP',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    phone: '+91 98202 34567',
+  },
+  {
+    id: 'user-admin-1',
+    name: 'Sunita Roy',
+    email: 'sunita@bachpanngo.org',
+    role: 'ngo_admin',
+    roleLabel: 'NGO Admin',
+    title: 'Executive Director',
+    ngoId: 'ngo-1',
+    ngoName: 'Bachpan Bachao Trust',
+    assignedStaff: 'Priya Sharma',
+    avatar: 'SR',
+    badgeColor: 'bg-purple-100 text-purple-800 border-purple-200',
+    phone: '+91 98303 45678',
+  },
+  {
+    id: 'user-ngo-2',
+    name: 'Rajesh Verma',
+    email: 'rajesh@ruralchild.org',
+    role: 'ngo_member',
+    roleLabel: 'Partner NGO Member',
+    title: 'Field Program Lead',
+    ngoId: 'ngo-2',
+    ngoName: 'Rural Child Development Initiative',
+    assignedStaff: 'Priya Sharma',
+    avatar: 'RV',
+    badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    phone: '+91 98404 56789',
+  },
+];
