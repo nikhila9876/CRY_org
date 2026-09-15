@@ -24,8 +24,8 @@ import StaffNotifications from './pages/staff/StaffNotifications';
 import NgoDashboard from './pages/ngo/NgoDashboard';
 import NgoTasks from './pages/ngo/NgoTasks';
 import NgoProjects from './pages/ngo/NgoProjects';
+import NgoDocuments from './pages/ngo/NgoDocuments';
 import {
-  NgoDocuments,
   NgoFieldVisits,
   NgoNotifications,
   NgoProfile,
