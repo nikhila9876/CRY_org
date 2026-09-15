@@ -16,6 +16,7 @@ import {
 import { MOCK_DOCUMENTS } from '../../mock/data/mockDocuments';
 import UploadZone from '../../components/common/UploadZone';
 import CorrectionFeedbackCard from '../../components/common/CorrectionFeedbackCard';
+import AIDocumentCheckModal from '../../components/ai/AIDocumentCheckModal';
 
 export default function NgoDocuments() {
   // Show only documents for this NGO (ngo-1: Bachpan Bachao Trust)
@@ -26,6 +27,7 @@ export default function NgoDocuments() {
   const [previewDoc, setPreviewDoc] = useState(null);
   const [reuploadDoc, setReuploadDoc] = useState(null);
   const [feedbackDoc, setFeedbackDoc] = useState(null);
+  const [aiScanDoc, setAiScanDoc] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
@@ -235,15 +237,27 @@ export default function NgoDocuments() {
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setPreviewDoc(doc)}
-                  className="inline-flex items-center space-x-1 text-xs font-semibold text-slate-600 hover:text-slate-900"
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Inspect</span>
-                </button>
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDoc(doc)}
+                    className="inline-flex items-center space-x-1 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>Inspect</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setAiScanDoc(doc)}
+                    className="inline-flex items-center space-x-1 text-xs font-semibold text-purple-700 hover:text-purple-900 bg-purple-50 hover:bg-purple-100 px-2 py-1 rounded-md transition-colors"
+                    title="Pre-submission AI statutory check"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                    <span>AI Pre-Check</span>
+                  </button>
+                </div>
 
                 <button
                   type="button"
@@ -401,6 +415,16 @@ export default function NgoDocuments() {
           </div>
         </div>
       )}
+
+      {/* AI Pre-Submission Scan Modal */}
+      <AIDocumentCheckModal
+        isOpen={!!aiScanDoc}
+        onClose={() => setAiScanDoc(null)}
+        document={aiScanDoc}
+        onConfirmSubmit={() => {
+          showToast('Pre-check completed with 96% confidence! Queued for CRY staff verification.');
+        }}
+      />
     </div>
   );
 }
