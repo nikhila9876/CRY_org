@@ -1,122 +1,182 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import AppShell from './components/layout/AppShell';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import RoleGuard from './components/auth/RoleGuard';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Public pages
+import Login from './pages/public/Login';
+import Forbidden403 from './pages/public/Forbidden403';
+import NotFound404 from './pages/public/NotFound404';
 
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+// Staff pages
+import StaffDashboard from './pages/staff/StaffDashboard';
+import {
+  StaffNgoList,
+  StaffProjects,
+  StaffDocuments,
+  StaffFieldVisits,
+  StaffNotifications,
+} from './pages/staff/StaffPagesBundle';
 
-      <div className="ticks"></div>
+// NGO pages
+import NgoDashboard from './pages/ngo/NgoDashboard';
+import {
+  NgoTasks,
+  NgoProjects,
+  NgoDocuments,
+  NgoFieldVisits,
+  NgoNotifications,
+  NgoProfile,
+} from './pages/ngo/NgoPagesBundle';
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+// Offline Field Visit
+import OfflineFieldVisit from './pages/offline/OfflineFieldVisit';
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function RootIndexRedirect() {
+  const { isAuthenticated, role } = useAuth();
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (role === 'cry_staff') return <Navigate to="/staff/dashboard" replace />;
+  return <Navigate to="/ngo/dashboard" replace />;
 }
 
-export default App
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/403" element={<Forbidden403 />} />
+
+          {/* Authenticated Workspace wrapped in AppShell */}
+          <Route
+            element={
+              <ProtectedRoute>
+                <AppShell />
+              </ProtectedRoute>
+            }
+          >
+            {/* Root smart redirect */}
+            <Route index element={<RootIndexRedirect />} />
+
+            {/* CRY Staff Routes (Guarded: CRY Staff only) */}
+            <Route
+              path="staff/dashboard"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffDashboard />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/ngos"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffNgoList />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/projects"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffProjects />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/documents"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffDocuments />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/field-visits"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffFieldVisits />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="staff/notifications"
+              element={
+                <RoleGuard allowedRoles={['cry_staff']}>
+                  <StaffNotifications />
+                </RoleGuard>
+              }
+            />
+
+            {/* Partner NGO Routes (Guarded: NGO Member & NGO Admin only) */}
+            <Route
+              path="ngo/dashboard"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoDashboard />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/tasks"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoTasks />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/projects"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoProjects />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/documents"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoDocuments />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/field-visits"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoFieldVisits />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/notifications"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoNotifications />
+                </RoleGuard>
+              }
+            />
+            <Route
+              path="ngo/profile"
+              element={
+                <RoleGuard allowedRoles={['ngo_member', 'ngo_admin']}>
+                  <NgoProfile />
+                </RoleGuard>
+              }
+            />
+
+            {/* Offline Field Visit Mode (Accessible by both Staff and NGO field workers) */}
+            <Route path="field-visit/:id/offline" element={<OfflineFieldVisit />} />
+          </Route>
+
+          {/* 404 Catch-all */}
+          <Route path="*" element={<NotFound404 />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
+}
