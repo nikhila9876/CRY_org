@@ -14,6 +14,7 @@ import {
   FileCheck,
 } from 'lucide-react';
 import { MOCK_DOCUMENTS } from '../../mock/data/mockDocuments';
+import UploadZone from '../../components/common/UploadZone';
 
 export default function NgoDocuments() {
   // Show only documents for this NGO (ngo-1: Bachpan Bachao Trust)
@@ -345,28 +346,11 @@ export default function NgoDocuments() {
             </div>
 
             <form onSubmit={handleReuploadSubmit} className="space-y-3.5 text-xs">
-              <div className="p-6 border-2 border-dashed border-slate-300 rounded-2xl text-center hover:border-[#2E7D32] transition-colors cursor-pointer bg-slate-50/50">
-                <UploadCloud className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <label className="cursor-pointer">
-                  <span className="text-xs font-bold text-[#2E7D32] hover:underline">
-                    Click to select file
-                  </span>
-                  <span className="text-slate-500 text-xs"> or drag and drop</span>
-                  <input
-                    type="file"
-                    required
-                    accept=".pdf,.xlsx,.xls,.docx"
-                    onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                    className="hidden"
-                  />
-                </label>
-                <p className="text-[10px] text-slate-400 mt-1">PDF, Excel or Word (Max 15MB)</p>
-                {selectedFile && (
-                  <div className="mt-3 p-2 bg-emerald-50 rounded-lg border border-emerald-200 text-emerald-800 font-semibold text-[11px] truncate">
-                    Selected: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
-                  </div>
-                )}
-              </div>
+              <UploadZone
+                onFileSelect={(file) => setSelectedFile(file)}
+                maxSizeMB={15}
+                acceptedFormats={['.pdf', '.xlsx', '.xls', '.docx']}
+              />
 
               <div className="pt-2 flex items-center justify-end space-x-2">
                 <button
