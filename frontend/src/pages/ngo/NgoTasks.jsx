@@ -1,0 +1,307 @@
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import {
+  CheckSquare,
+  Clock,
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Calendar,
+  FileText,
+  ArrowRight,
+  Filter,
+  User,
+  ChevronRight,
+  Check,
+} from 'lucide-react';
+import { MOCK_TASKS } from '../../mock/data/mockTasks';
+
+export default function NgoTasks() {
+  const [tasks, setTasks] = useState(MOCK_TASKS);
+  const [selectedDueCategory, setSelectedDueCategory] = useState('ALL');
+  const [selectedPriority, setSelectedPriority] = useState('ALL');
+  const [selectedTaskDetails, setSelectedTaskDetails] = useState(null);
+
+  const handleToggleTaskStatus = (taskId) => {
+    setTasks((prev) =>
+      prev.map((t) => {
+        if (t.id === taskId) {
+          const nextStatus = t.status === 'completed' ? 'pending' : 'completed';
+          return {
+            ...t,
+            status: nextStatus,
+            countdownText: nextStatus === 'completed' ? 'Completed' : 'Pending',
+          };
+        }
+        return t;
+      })
+    );
+  };
+
+  const filteredTasks = tasks.filter((task) => {
+    const matchesCategory =
+      selectedDueCategory === 'ALL' ||
+      (selectedDueCategory === 'completed'
+        ? task.status === 'completed'
+        : task.dueCategory === selectedDueCategory && task.status !== 'completed');
+
+    const matchesPriority =
+      selectedPriority === 'ALL' || task.priority === selectedPriority;
+
+    return matchesCategory && matchesPriority;
+  });
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#E2E8F0]">
+        <div>
+          <div className="flex items-center space-x-2">
+            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-200">
+              Deliverables & Filings
+            </span>
+            <span className="text-xs text-slate-500">Bachpan Bachao Trust</span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-black text-[#172033] mt-1 tracking-tight">
+            My Action Items & Deliverables
+          </h1>
+          <p className="text-sm text-slate-500">
+            Track urgent compliance tasks, milestone countdowns, and statutory document submissions.
+          </p>
+        </div>
+
+        <Link
+          to="/ngo/documents"
+          className="inline-flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-[#2E7D32] hover:bg-[#1B5E20] text-xs font-bold text-white shadow-xs transition-colors"
+        >
+          <FileText className="w-4 h-4" />
+          <span>Go to Document Center</span>
+        </Link>
+      </div>
+
+      {/* Due Category Filter Tabs */}
+      <div className="bg-white p-3.5 rounded-2xl border border-[#E2E8F0] shadow-2xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+          {[
+            { key: 'ALL', label: 'All Tasks' },
+            { key: 'today', label: '🔥 Today' },
+            { key: 'this_week', label: '📅 This Week' },
+            { key: 'this_month', label: '🗓️ This Month' },
+            { key: 'completed', label: '✓ Completed' },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setSelectedDueCategory(tab.key)}
+              className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                selectedDueCategory === tab.key
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center space-x-2 text-xs">
+          <span className="text-slate-400 font-semibold text-[11px] uppercase">Priority:</span>
+          {['ALL', 'high', 'medium', 'low'].map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => setSelectedPriority(p)}
+              className={`px-2.5 py-1 rounded-lg font-semibold transition-colors ${
+                selectedPriority === p
+                  ? 'bg-[#2E7D32] text-white'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              }`}
+            >
+              {p === 'ALL' ? 'All' : p.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tasks List */}
+      <div className="space-y-3">
+        {filteredTasks.map((task) => {
+          const isDone = task.status === 'completed';
+
+          const priorityBadge = {
+            high: 'bg-rose-50 text-[#DC2626] border-rose-200',
+            medium: 'bg-amber-50 text-[#D97706] border-amber-200',
+            low: 'bg-slate-100 text-slate-700 border-slate-200',
+          }[task.priority];
+
+          return (
+            <div
+              key={task.id}
+              className={`p-4 sm:p-5 rounded-2xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
+                isDone
+                  ? 'bg-slate-50/70 border-slate-200/80 opacity-75'
+                  : task.dueCategory === 'today'
+                  ? 'bg-rose-50/30 border-rose-200 shadow-2xs'
+                  : 'bg-white border-[#E2E8F0] shadow-2xs hover:shadow-xs'
+              }`}
+            >
+              <div className="flex items-start space-x-3.5">
+                {/* Complete checkbox button */}
+                <button
+                  type="button"
+                  onClick={() => handleToggleTaskStatus(task.id)}
+                  className={`w-6 h-6 rounded-lg border flex items-center justify-center transition-colors mt-0.5 shrink-0 ${
+                    isDone
+                      ? 'bg-[#2E7D32] border-[#2E7D32] text-white'
+                      : 'border-slate-300 hover:border-[#2E7D32] bg-white'
+                  }`}
+                  title={isDone ? 'Mark as incomplete' : 'Mark as completed'}
+                >
+                  {isDone && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                </button>
+
+                <div className="space-y-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${priorityBadge}`}
+                    >
+                      {task.priority} Priority
+                    </span>
+                    <span className="text-xs font-semibold text-slate-500">
+                      Due: {task.dueDate}
+                    </span>
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                        task.dueCategory === 'today'
+                          ? 'bg-rose-100 text-rose-800 animate-pulse'
+                          : 'bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {task.countdownText}
+                    </span>
+                  </div>
+
+                  <h3
+                    className={`text-sm sm:text-base font-bold ${
+                      isDone ? 'text-slate-400 line-through' : 'text-[#172033]'
+                    }`}
+                  >
+                    {task.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 max-w-3xl leading-relaxed line-clamp-2">
+                    {task.description}
+                  </p>
+
+                  <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 pt-1">
+                    <span className="flex items-center space-x-1">
+                      <User className="w-3 h-3" />
+                      <span>{task.assignedTo}</span>
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center space-x-1 text-slate-600 font-semibold">
+                      <FileText className="w-3 h-3 text-blue-600" />
+                      <span>Required: {task.requiredDocument}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2 self-start sm:self-center shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setSelectedTaskDetails(task)}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors"
+                >
+                  Details
+                </button>
+
+                <Link
+                  to={task.actionUrl}
+                  className="inline-flex items-center space-x-1 px-3.5 py-1.5 rounded-lg bg-[#2E7D32] hover:bg-[#1B5E20] text-xs font-bold text-white transition-colors shadow-2xs"
+                >
+                  <span>Go to Filing</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+
+        {filteredTasks.length === 0 && (
+          <div className="p-12 text-center bg-white rounded-2xl border border-slate-200">
+            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto mb-2" />
+            <h3 className="text-sm font-bold text-slate-800">No tasks match this filter</h3>
+            <p className="text-xs text-slate-500 mt-1">All action items are up to date.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Task Details Modal */}
+      {selectedTaskDetails && (
+        <div className="fixed inset-0 bg-slate-900/40 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-start justify-between pb-3 border-b border-slate-100">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  Deliverable Details
+                </span>
+                <h3 className="text-lg font-bold text-[#172033]">{selectedTaskDetails.title}</h3>
+                <span className="text-xs text-slate-500">Ref: {selectedTaskDetails.id}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedTaskDetails(null)}
+                className="text-slate-400 hover:text-slate-600 font-bold p-1"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                  Detailed Instructions:
+                </span>
+                <p className="text-slate-700 leading-relaxed">{selectedTaskDetails.description}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-2.5 rounded-lg border border-slate-200">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Deadline</span>
+                  <span className="font-bold text-slate-800">{selectedTaskDetails.dueDate}</span>
+                </div>
+                <div className="p-2.5 rounded-lg border border-slate-200">
+                  <span className="text-slate-400 text-[10px] uppercase font-bold block">Lead Owner</span>
+                  <span className="font-bold text-slate-800">{selectedTaskDetails.assignedTo}</span>
+                </div>
+              </div>
+
+              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900">
+                <strong>Mandatory Statutory Upload: </strong>
+                <span>{selectedTaskDetails.requiredDocument}</span>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-end space-x-2">
+              <button
+                type="button"
+                onClick={() => setSelectedTaskDetails(null)}
+                className="px-3.5 py-2 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+              >
+                Close
+              </button>
+              <Link
+                to={selectedTaskDetails.actionUrl}
+                className="px-4 py-2 rounded-lg bg-[#2E7D32] hover:bg-[#1B5E20] text-xs font-bold text-white transition-colors"
+              >
+                Open Filing Form
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
