@@ -16,8 +16,8 @@ import StaffNgoList from './pages/staff/StaffNgoList';
 import StaffNgoDetail from './pages/staff/StaffNgoDetail';
 import StaffProjects from './pages/staff/StaffProjects';
 import StaffTimeline from './pages/staff/StaffTimeline';
+import StaffDocuments from './pages/staff/StaffDocuments';
 import {
-  StaffDocuments,
   StaffFieldVisits,
   StaffNotifications,
 } from './pages/staff/StaffPagesBundle';
