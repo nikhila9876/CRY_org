@@ -1,0 +1,40 @@
+{
+  "name": "CRY NGO360 - Operations & Compliance Platform",
+  "short_name": "CRY NGO360",
+  "description": "Comprehensive NGO project monitoring, grant tracking, compliance governance, and offline field visit platform for Child Rights and You.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2E7D32",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Offline Field Visit",
+      "short_name": "Field Mode",
+      "description": "Open cached field visit checklist and media capture",
+      "url": "/field-visit/fv-101/offline",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    },
+    {
+      "name": "Staff Dashboard",
+      "short_name": "Dashboard",
+      "description": "Review NGO portfolio and compliance health scores",
+      "url": "/staff/dashboard",
+      "icons": [{ "src": "/favicon.svg", "sizes": "192x192" }]
+    }
+  ]
+}
