@@ -16,9 +16,11 @@ import {
 } from 'lucide-react';
 import { MOCK_TASKS } from '../../mock/data/mockTasks';
 import DeadlineFilters from '../../components/common/DeadlineFilters';
+import SearchBar from '../../components/common/SearchBar';
 
 export default function NgoTasks() {
   const [tasks, setTasks] = useState(MOCK_TASKS);
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeHorizon, setActiveHorizon] = useState('ALL');
   const [activeCategory, setActiveCategory] = useState('ALL');
   const [selectedPriority, setSelectedPriority] = useState('ALL');
@@ -49,6 +51,16 @@ export default function NgoTasks() {
   };
 
   const filteredTasks = tasks.filter((task) => {
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        task.title.toLowerCase().includes(q) ||
+        task.description.toLowerCase().includes(q) ||
+        task.requiredDocument.toLowerCase().includes(q) ||
+        task.assignedTo.toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+    }
+
     if (activeHorizon === 'OVERDUE') {
       if (!(task.daysRemaining < 0 && task.status !== 'completed')) return false;
     } else if (activeHorizon === '24H') {
@@ -97,6 +109,29 @@ export default function NgoTasks() {
           <span>Go to Document Center</span>
         </Link>
       </div>
+
+      {/* Search Input */}
+      <SearchBar
+        value={searchQuery}
+        onChange={setSearchQuery}
+        placeholder="Search action items, deadlines, required documents, or assigned team..."
+      />
+
+      {/* Search Active Indicator */}
+      {searchQuery && (
+        <div className="text-xs text-slate-500 flex items-center justify-between px-1">
+          <span>
+            Found <strong className="text-slate-800 font-bold">{filteredTasks.length}</strong> tasks matching "{searchQuery}"
+          </span>
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="text-rose-600 hover:underline font-semibold"
+          >
+            Clear search
+          </button>
+        </div>
+      )}
 
       {/* Deadline Horizons & Category Filters */}
       <DeadlineFilters
