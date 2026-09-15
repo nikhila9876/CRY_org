@@ -21,6 +21,7 @@ import {
 import { MOCK_FIELD_VISITS } from '../../mock/data/mockFieldVisits';
 import OfflineChecklist from '../../components/offline/OfflineChecklist';
 import OfflineNotes from '../../components/offline/OfflineNotes';
+import OfflinePhotoCapture from '../../components/offline/OfflinePhotoCapture';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -249,32 +250,7 @@ export default function OfflineFieldVisit() {
         )}
 
         {activeTab === 'photos' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-[#172033]">
-                  Geo-Tagged Photo Evidence
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Capture field activities, school classrooms, and ledger receipts.
-                </p>
-              </div>
-              <button
-                type="button"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F766E] text-white text-xs font-bold"
-              >
-                <Camera className="w-3.5 h-3.5" />
-                Capture Photo
-              </button>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center hover:bg-slate-50 cursor-pointer min-h-[140px]">
-                <Camera className="w-6 h-6 text-slate-400 mb-1" />
-                <span className="text-xs font-semibold text-slate-600">Add Field Photo</span>
-                <span className="text-[10px] text-slate-400">Base64 / Local Blob</span>
-              </div>
-            </div>
-          </div>
+          <OfflinePhotoCapture onUpdate={() => setHasPendingChanges(true)} />
         )}
 
         {activeTab === 'audio' && (
