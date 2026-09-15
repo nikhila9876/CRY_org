@@ -19,6 +19,7 @@ import {
   UploadCloud,
 } from 'lucide-react';
 import { MOCK_FIELD_VISITS } from '../../mock/data/mockFieldVisits';
+import OfflineChecklist from '../../components/offline/OfflineChecklist';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -236,45 +237,7 @@ export default function OfflineFieldVisit() {
       {/* Tab Panels */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs min-h-[360px]">
         {activeTab === 'checklist' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-base font-bold text-[#172033]">
-                  Field Audit Checklist & Objectives
-                </h3>
-                <p className="text-xs text-slate-500">
-                  Record on-ground compliance checks across financial, legal, and operational parameters.
-                </p>
-              </div>
-              <span className="text-xs font-bold text-[#0F766E] bg-teal-50 px-3 py-1 rounded-lg border border-teal-200">
-                1 of 4 verified
-              </span>
-            </div>
-
-            <div className="divide-y divide-slate-100">
-              {visitData.objectives.map((obj, i) => {
-                const isCompleted = visitData.completedActivities?.includes(obj);
-                return (
-                  <div
-                    key={i}
-                    className="py-3.5 flex items-start gap-3 hover:bg-slate-50/60 p-2 rounded-xl transition-colors"
-                  >
-                    <input
-                      type="checkbox"
-                      defaultChecked={isCompleted}
-                      className="w-4 h-4 rounded text-[#0F766E] focus:ring-[#0F766E] mt-0.5"
-                    />
-                    <div className="flex-1">
-                      <p className={`text-xs sm:text-sm font-medium ${isCompleted ? 'line-through text-slate-400' : 'text-slate-700'}`}>
-                        {obj}
-                      </p>
-                      <span className="text-[11px] text-slate-400">Tap to add inspector remarks</span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <OfflineChecklist onUpdate={() => setHasPendingChanges(true)} />
         )}
 
         {activeTab === 'notes' && (
