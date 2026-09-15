@@ -18,9 +18,7 @@ import StaffProjects from './pages/staff/StaffProjects';
 import StaffTimeline from './pages/staff/StaffTimeline';
 import StaffDocuments from './pages/staff/StaffDocuments';
 import StaffFieldVisits from './pages/staff/StaffFieldVisits';
-import {
-  StaffNotifications,
-} from './pages/staff/StaffPagesBundle';
+import StaffNotifications from './pages/staff/StaffNotifications';
 
 // NGO pages
 import NgoDashboard from './pages/ngo/NgoDashboard';
