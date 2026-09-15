@@ -1,0 +1,13 @@
+{
+  "name": "cry-ngo360-root",
+  "version": "1.0.0",
+  "description": "NGO360 - CRY Project Monitoring, Compliance & Field Operations Platform",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "preview": "npm --prefix frontend run preview"
+  }
+}
