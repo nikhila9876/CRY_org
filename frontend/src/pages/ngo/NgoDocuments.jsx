@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { MOCK_DOCUMENTS } from '../../mock/data/mockDocuments';
 import UploadZone from '../../components/common/UploadZone';
+import CorrectionFeedbackCard from '../../components/common/CorrectionFeedbackCard';
 
 export default function NgoDocuments() {
   // Show only documents for this NGO (ngo-1: Bachpan Bachao Trust)
@@ -108,31 +109,16 @@ export default function NgoDocuments() {
       </div>
 
       {/* Action Required Banner for Documents Needing Correction */}
-      {documents.some((d) => d.status === 'needs_correction') && (
-        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 flex items-start justify-between gap-4 shadow-2xs">
-          <div className="flex items-start space-x-3">
-            <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <div>
-              <h4 className="text-xs sm:text-sm font-bold text-amber-900">
-                Action Required: 1 Document Marked for Correction
-              </h4>
-              <p className="text-xs text-amber-800 mt-0.5">
-                Staff reviewer Priya Sharma requested revisions on <strong>Utilization Certificate (Q2)</strong>. Please re-upload with clear auditor seal before Sept 15 to prevent grant disbursal delays.
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              const doc = documents.find((d) => d.status === 'needs_correction');
-              setReuploadDoc(doc);
-            }}
-            className="px-3.5 py-1.5 rounded-lg bg-[#D97706] hover:bg-amber-700 text-white text-xs font-bold shrink-0 shadow-xs"
-          >
-            Fix & Re-upload
-          </button>
-        </div>
-      )}
+      {documents.filter((d) => d.status === 'needs_correction').map((correctionDoc) => (
+        <CorrectionFeedbackCard
+          key={correctionDoc.id}
+          documentTitle={correctionDoc.title}
+          reviewer={correctionDoc.reviewer}
+          reviewedAt={correctionDoc.reviewedAt}
+          reason={correctionDoc.feedbackReason}
+          onReuploadClick={() => setReuploadDoc(correctionDoc)}
+        />
+      ))}
 
       {/* Tabs Bar */}
       <div className="flex flex-wrap items-center gap-2 p-1.5 bg-white rounded-2xl border border-[#E2E8F0] shadow-2xs text-xs">
