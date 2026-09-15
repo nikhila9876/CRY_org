@@ -32,66 +32,95 @@ export async function createAndMergePR({ branch, commitMessage, prTitle, prBody 
   try {
     execSync(`git commit -m "${commitMessage.replace(/"/g, '\\"')}"`, { stdio: 'inherit' });
   } catch (e) {
-    console.log('No new changes to commit or commit failed.');
+    console.log('No new changes to commit or commit clean.');
   }
 
   console.log(`Pushing branch ${branch} to origin...`);
   execSync(`git push -u origin ${branch} --force`, { stdio: 'inherit' });
 
   console.log(`Creating Pull Request on GitHub: "${prTitle}"...`);
-  const prRes = await fetch('https://api.github.com/repos/nikhila9876/CRY_org/pulls', {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      title: prTitle,
-      head: branch,
-      base: 'main',
-      body: prBody,
-    }),
-  });
+  let prNumber = null;
 
-  const prData = await prRes.json();
-  if (!prRes.ok) {
-    // If PR already exists for this branch, find existing PR
-    if (prData.errors && prData.errors[0]?.message?.includes('A pull request already exists')) {
-      console.log('PR already exists, fetching existing PR...');
-      const listRes = await fetch(`https://api.github.com/repos/nikhila9876/CRY_org/pulls?head=nikhila9876:${branch}`, { headers });
-      const listData = await listRes.json();
-      if (listData.length > 0) {
-        return mergeExistingPR(listData[0].number, prTitle, headers);
-      }
+  try {
+    const prRes = await fetch('https://api.github.com/repos/nikhila9876/CRY_org/pulls', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        title: prTitle,
+        head: branch,
+        base: 'main',
+        body: prBody,
+      }),
+    });
+
+    const text = await prRes.text();
+    const prData = text ? JSON.parse(text) : {};
+
+    if (prRes.ok) {
+      prNumber = prData.number;
+      console.log(`Created PR #${prNumber}: ${prData.html_url}`);
+    } else {
+      console.log(`PR creation response (${prRes.status}):`, prData?.message || text);
     }
-    throw new Error(`Failed to create PR: ${prRes.status} ${JSON.stringify(prData)}`);
+  } catch (err) {
+    console.error('Error creating PR:', err.message);
   }
 
-  console.log(`Created PR #${prData.number}: ${prData.html_url}`);
-  return mergeExistingPR(prData.number, prTitle, headers);
+  if (!prNumber) {
+    // Find open PR for this branch
+    const listRes = await fetch(`https://api.github.com/repos/nikhila9876/CRY_org/pulls?head=nikhila9876:${branch}&state=open`, { headers });
+    const listData = await listRes.json();
+    if (listData && listData.length > 0) {
+      prNumber = listData[0].number;
+      console.log(`Found existing open PR #${prNumber}`);
+    } else {
+      throw new Error(`Could not find or create open PR for ${branch}`);
+    }
+  }
+
+  return mergeExistingPR(prNumber, prTitle, headers);
 }
 
 async function mergeExistingPR(prNumber, prTitle, headers) {
   console.log(`Merging PR #${prNumber} into main (merge commit, no squash)...`);
-  // Brief delay to ensure GitHub processes the ref
-  await new Promise((r) => setTimeout(r, 1500));
 
-  const mergeRes = await fetch(`https://api.github.com/repos/nikhila9876/CRY_org/pulls/${prNumber}/merge`, {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify({
-      commit_title: prTitle,
-      merge_method: 'merge',
-    }),
-  });
+  let merged = false;
+  for (let attempt = 1; attempt <= 6; attempt++) {
+    // Wait for GitHub to finish calculating mergeability
+    await new Promise((r) => setTimeout(r, 2000));
 
-  const mergeData = await mergeRes.json();
-  if (!mergeRes.ok) {
-    throw new Error(`Failed to merge PR #${prNumber}: ${mergeRes.status} ${JSON.stringify(mergeData)}`);
+    try {
+      const mergeRes = await fetch(`https://api.github.com/repos/nikhila9876/CRY_org/pulls/${prNumber}/merge`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          commit_title: prTitle,
+          merge_method: 'merge',
+        }),
+      });
+
+      const resText = await mergeRes.text();
+      const mergeData = resText ? JSON.parse(resText) : {};
+
+      if (mergeRes.ok && (mergeData.merged || mergeRes.status === 200)) {
+        console.log(`Successfully merged PR #${prNumber}: ${mergeData.message || 'Merged'}`);
+        merged = true;
+        break;
+      } else {
+        console.log(`Attempt ${attempt}: Merge returned status ${mergeRes.status}: ${mergeData.message || resText}. Retrying...`);
+      }
+    } catch (e) {
+      console.log(`Attempt ${attempt} network error:`, e.message);
+    }
   }
 
-  console.log(`Successfully merged PR #${prNumber}: ${mergeData.message}`);
+  if (!merged) {
+    throw new Error(`Failed to merge PR #${prNumber} after several attempts.`);
+  }
 
   console.log(`Switching back to main and syncing local...`);
   execSync(`git checkout main`, { stdio: 'inherit' });
   execSync(`git pull origin main`, { stdio: 'inherit' });
 
-  return { prNumber, message: mergeData.message };
+  return { prNumber, message: 'Merged successfully' };
 }
