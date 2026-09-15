@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { MOCK_FIELD_VISITS } from '../../mock/data/mockFieldVisits';
 import OfflineChecklist from '../../components/offline/OfflineChecklist';
+import OfflineNotes from '../../components/offline/OfflineNotes';
 
 export default function OfflineFieldVisit() {
   const { id } = useParams();
@@ -241,22 +242,10 @@ export default function OfflineFieldVisit() {
         )}
 
         {activeTab === 'notes' && (
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-bold text-[#172033]">
-                Structured Field Observation Notes
-              </h3>
-              <p className="text-xs text-slate-500">
-                Type qualitative impressions, community feedback, and recommendations. Autosaved to IndexedDB.
-              </p>
-            </div>
-            <textarea
-              defaultValue={visitData.notes}
-              rows={8}
-              placeholder="Enter detailed field visit observations, community testimonials, risk indicators..."
-              className="w-full p-4 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0F766E] text-xs sm:text-sm text-slate-700 font-mono"
-            />
-          </div>
+          <OfflineNotes
+            initialNotes={visitData.notes}
+            onSave={() => setHasPendingChanges(true)}
+          />
         )}
 
         {activeTab === 'photos' && (
